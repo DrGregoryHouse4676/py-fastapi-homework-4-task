@@ -49,9 +49,25 @@ class Settings(BaseAppSettings):
 
 
 class TestingSettings(BaseAppSettings):
+    EMAIL_HOST: str = "127.0.0.1"
+    EMAIL_PORT: int = 1025
+    EMAIL_HOST_USER: str = "testuser"
+    EMAIL_HOST_PASSWORD: str = "test_password"
+    EMAIL_USE_TLS: bool = False
+    MAILHOG_API_PORT: int = 8025
+
     SECRET_KEY_ACCESS: str = "SECRET_KEY_ACCESS"
     SECRET_KEY_REFRESH: str = "SECRET_KEY_REFRESH"
     JWT_SIGNING_ALGORITHM: str = "HS256"
+
+    DATABASE_URL: str = "sqlite+aiosqlite:///:memory:"
+
+    S3_STORAGE_ENDPOINT: str = "http://localhost:9000"
+    S3_STORAGE_ACCESS_KEY: str = "minioadmin"
+    S3_STORAGE_SECRET_KEY: str = "some_password"
+    S3_BUCKET_NAME: str = "theater-storage"
+
+    ENVIRONMENT: str = "testing"
 
     def model_post_init(self, __context: dict[str, Any] | None = None) -> None:
         object.__setattr__(self, 'PATH_TO_DB', ":memory:")

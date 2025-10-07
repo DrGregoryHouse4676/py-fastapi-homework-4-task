@@ -34,6 +34,7 @@ asyncpg = "^0.30.0"
 aiosqlite = "^0.21.0"
 aioboto3 = "^13.4.0"
 pytest-asyncio = "^0.25.3"
+greenlet = "^3.2.4"
 
 
 [build-system]

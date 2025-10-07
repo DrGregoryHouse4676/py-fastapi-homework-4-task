@@ -1,4 +1,5 @@
 import os
+from functools import lru_cache
 
 from fastapi import Depends
 
@@ -9,6 +10,7 @@ from security.token_manager import JWTAuthManager
 from storages import S3StorageInterface, S3StorageClient
 
 
+@lru_cache(maxsize=1)
 def get_settings() -> BaseAppSettings:
     """
     Retrieve the application settings based on the current environment.
@@ -76,7 +78,8 @@ def get_accounts_email_notificator(
         activation_email_template_name=settings.ACTIVATION_EMAIL_TEMPLATE_NAME,
         activation_complete_email_template_name=settings.ACTIVATION_COMPLETE_EMAIL_TEMPLATE_NAME,
         password_email_template_name=settings.PASSWORD_RESET_TEMPLATE_NAME,
-        password_complete_email_template_name=settings.PASSWORD_RESET_COMPLETE_TEMPLATE_NAME
+        password_complete_email_template_name=settings.PASSWORD_RESET_COMPLETE_TEMPLATE_NAME,
+        mailhog_api_port=settings.MAILHOG_API_PORT,
     )
 
 
@@ -101,5 +104,5 @@ def get_s3_storage_client(
         endpoint_url=settings.S3_STORAGE_ENDPOINT,
         access_key=settings.S3_STORAGE_ACCESS_KEY,
         secret_key=settings.S3_STORAGE_SECRET_KEY,
-        bucket_name=settings.S3_BUCKET_NAME
+        bucket_name=settings.S3_BUCKET_NAME,
     )

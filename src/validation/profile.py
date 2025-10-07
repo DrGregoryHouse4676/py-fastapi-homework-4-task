@@ -8,15 +8,19 @@ from fastapi import UploadFile
 from database.models.accounts import GenderEnum
 
 
-def validate_name(name: str):
-    if re.search(r'^[A-Za-z]*$', name) is None:
-        raise ValueError(f'{name} contains non-english letters')
+def validate_name(name: str) -> None:
+    if not isinstance(name, str) or not name:
+        raise ValueError("Name is required.")
+
+    if re.search(r"^[A-Za-z]+$", name) is None:
+        raise ValueError(f"{name} contains non-english letters")
 
 
 def validate_image(avatar: UploadFile) -> None:
     supported_image_formats = ["JPG", "JPEG", "PNG"]
     max_file_size = 1 * 1024 * 1024
 
+    avatar.file.seek(0)
     contents = avatar.file.read()
     if len(contents) > max_file_size:
         raise ValueError("Image size exceeds 1 MB")
@@ -32,7 +36,10 @@ def validate_image(avatar: UploadFile) -> None:
 
 
 def validate_gender(gender: str) -> None:
-    if gender not in GenderEnum.__members__.values():
+    if not isinstance(gender, str) or not gender:
+        raise ValueError("Gender is required.")
+
+    if gender.lower() not in {g.value for g in GenderEnum}:
         raise ValueError(f"Gender must be one of: {', '.join(g.value for g in GenderEnum)}")
 
 
