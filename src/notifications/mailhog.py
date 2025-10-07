@@ -69,6 +69,7 @@ def _ensure_server(host: str, port: int) -> Tuple[str, int]:
 
         return canonical_key
 
+
 async def store_mailhog_message(
     host: str,
     port: int,

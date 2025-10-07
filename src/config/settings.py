@@ -1,4 +1,5 @@
 import os
+import secrets
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +25,7 @@ class BaseAppSettings(BaseSettings):
     EMAIL_HOST_PASSWORD: str = os.getenv("EMAIL_HOST_PASSWORD", "test_password")
     EMAIL_USE_TLS: bool = os.getenv("EMAIL_USE_TLS", "False").lower() == "true"
     MAILHOG_API_PORT: int = os.getenv("MAILHOG_API_PORT", 8025)
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://127.0.0.1:3000")
 
     S3_STORAGE_HOST: str = os.getenv("MINIO_HOST", "minio-theater")
     S3_STORAGE_PORT: int = os.getenv("MINIO_PORT", 9000)
@@ -43,8 +45,8 @@ class Settings(BaseAppSettings):
     POSTGRES_DB_PORT: int = int(os.getenv("POSTGRES_DB_PORT", 5432))
     POSTGRES_DB: str = os.getenv("POSTGRES_DB", "test_db")
 
-    SECRET_KEY_ACCESS: str = os.getenv("SECRET_KEY_ACCESS", os.urandom(32))
-    SECRET_KEY_REFRESH: str = os.getenv("SECRET_KEY_REFRESH", os.urandom(32))
+    SECRET_KEY_ACCESS: str = os.getenv("SECRET_KEY_ACCESS" or secrets.token_urlsafe(32))
+    SECRET_KEY_REFRESH: str = os.getenv("SECRET_KEY_REFRESH" or secrets.token_urlsafe(32))
     JWT_SIGNING_ALGORITHM: str = os.getenv("JWT_SIGNING_ALGORITHM", "HS256")
 
 
@@ -62,7 +64,8 @@ class TestingSettings(BaseAppSettings):
 
     DATABASE_URL: str = "sqlite+aiosqlite:///:memory:"
 
-    S3_STORAGE_ENDPOINT: str = "http://localhost:9000"
+    S3_STORAGE_HOST: str = "localhost"
+    S3_STORAGE_PORT: int = 9000
     S3_STORAGE_ACCESS_KEY: str = "minioadmin"
     S3_STORAGE_SECRET_KEY: str = "some_password"
     S3_BUCKET_NAME: str = "theater-storage"

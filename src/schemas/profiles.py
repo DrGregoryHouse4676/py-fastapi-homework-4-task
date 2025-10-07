@@ -13,6 +13,7 @@ from validation import (
 
 # Write your code here
 
+
 class ProfileCreateRequestSchema(BaseModel):
     first_name: str
     last_name: str

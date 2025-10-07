@@ -86,7 +86,7 @@ async def create_user_profile(
 
     avatar = profile_data.avatar
     avatar_bytes = await avatar.read()
-    avatar.seek(0)
+    await avatar.seek(0)
     avatar_extension = profile_data.avatar_extension()
     avatar_key = f"avatars/{target_user.id}_avatar{avatar_extension}"
 
