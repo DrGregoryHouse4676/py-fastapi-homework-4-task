@@ -44,11 +44,7 @@ class EmailSender(EmailSenderInterface):
         message["Subject"] = subject
         message.attach(MIMEText(html_content, "html"))
 
-        if any(h in self._hostname for h in ("127.0.0.1", "localhost", "mailhog_theater")):
-            host = "127.0.0.1"
-            api_port = self.mailhog_api_port or 8025
-            await store_mailhog_message(host, api_port, recipient, subject, html_content)
-            return
+        smtp: aiosmtplib.SMTP | None = None
 
         try:
             smtp = aiosmtplib.SMTP(hostname=self._hostname, port=self._port, start_tls=self._use_tls)
@@ -57,10 +53,20 @@ class EmailSender(EmailSenderInterface):
                 await smtp.starttls()
             await smtp.login(self._email, self._password)
             await smtp.sendmail(self._email, [recipient], message.as_string())
-            await smtp.quit()
-        except aiosmtplib.SMTPException as error:
+        except (aiosmtplib.SMTPException, OSError) as error:
+            if self.mailhog_api_port and self._hostname in {"127.0.0.1", "localhost"}:
+                host = "127.0.0.1"
+                api_port = self.mailhog_api_port or 8025
+                await store_mailhog_message(host, api_port, recipient, subject, html_content)
+                return
             logging.error(f"Failed to send email to {recipient}: {error}")
             raise BaseEmailError(f"Failed to send email to {recipient}: {error}")
+        finally:
+            if smtp is not None:
+                try:
+                    await smtp.quit()
+                except aiosmtplib.SMTPException:
+                    pass
 
     async def send_activation_email(self, email: str, activation_link: str) -> None:
         template = self._env.get_template(self._activation_email_template_name)

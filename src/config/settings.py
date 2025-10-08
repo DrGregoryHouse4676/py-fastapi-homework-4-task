@@ -45,8 +45,8 @@ class Settings(BaseAppSettings):
     POSTGRES_DB_PORT: int = int(os.getenv("POSTGRES_DB_PORT", 5432))
     POSTGRES_DB: str = os.getenv("POSTGRES_DB", "test_db")
 
-    SECRET_KEY_ACCESS: str = os.getenv("SECRET_KEY_ACCESS" or secrets.token_urlsafe(32))
-    SECRET_KEY_REFRESH: str = os.getenv("SECRET_KEY_REFRESH" or secrets.token_urlsafe(32))
+    SECRET_KEY_ACCESS: str = os.getenv("SECRET_KEY_ACCESS", secrets.token_urlsafe(32))
+    SECRET_KEY_REFRESH: str = os.getenv("SECRET_KEY_REFRESH", secrets.token_urlsafe(32))
     JWT_SIGNING_ALGORITHM: str = os.getenv("JWT_SIGNING_ALGORITHM", "HS256")
 
 
